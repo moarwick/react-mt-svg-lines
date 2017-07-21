@@ -35,8 +35,8 @@
     "react": "^15.2.0"
   },
   "dependencies": {
-    "prop-types": "^15.5.10",
-    "tween.js": "^16.3.4"
+    "@tweenjs/tween.js": "^16.9.0",
+    "prop-types": "^15.5.10"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.7",
