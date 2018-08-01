@@ -68,6 +68,7 @@ export default class MtSvgLines extends React.Component {
 
     this._animStart = 0 // anim start timestamp
 
+    this._svgWrapper = null
     this._pathElems = []
     this._pathDataFrom = {}
     this._pathDataTo = {}
@@ -234,10 +235,10 @@ export default class MtSvgLines extends React.Component {
   }
 
   /*
-   * Acquire selection of SVG 'path' elems contained within
+   * Acquire selection of 'path' elems contained within the SVG wrapper
    */
   selectPathElems () {
-    const svgEl = this._svgWrapper.getElementsByTagName('svg')[0]
+    const svgEl = this._svgWrapper && this._svgWrapper.getElementsByTagName('svg')[0]
     return svgEl ? svgEl.querySelectorAll('path') : []
   }
 
@@ -253,8 +254,8 @@ export default class MtSvgLines extends React.Component {
     [].forEach.call(pathElems, (pathEl, i) => {
       if (!this.hasSkipAttr(pathEl.attributes)) {
         const pathLengh = trimFloat(pathEl.getTotalLength() || 0)
-        pathData.to[ i ] = 0
         pathData.from[ i ] = pathLengh
+        pathData.to[ i ] = 0
       }
     })
 
