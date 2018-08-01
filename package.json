@@ -25,7 +25,8 @@
     "deploy": "gh-pages -d public",
     "lint": "eslint src",
     "dist": "babel src --out-dir lib --ignore demos",
-    "prepublish": "npm run dist"
+    "predeploy": "npm run build",
+    "prepublishOnly": "npm run dist"
   },
   "browserify": {
     "transform": [
