@@ -1,151 +1,120 @@
-var path = require('path')
-var webpack = require('webpack')
-var merge = require('webpack-merge')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
-var TARGET_ENV = process.env.npm_lifecycle_event === 'build' ? 'production' : 'development'
+const isProd = process.argv.includes('production');
+const isDev = !isProd;
+const ENV = isProd ? 'production' : 'development';
+const DEV_PORT = '8080';
 
-// common Webpack config settings
-var commonConfig = {
-  output: {
-    path: path.resolve(__dirname, 'public/'),
-    filename: '[hash].min.js'
-  },
+const srcFolder = path.resolve(__dirname, 'src/demos');
+const outFolder = path.resolve(__dirname, 'public');
 
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        use: [
-          { loader: 'react-hot-loader' },
-          { loader: 'babel-loader' }
-        ],
-        include: path.resolve(__dirname, 'src')
-      },
-      {
-        test: /\.(png|jpg|jpeg)$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'url-loader',
-            options: { limit: 8192, name: './img/[hash].[ext]' } // inline if under 8k
-          }
-        ]
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf)$/,
-        exclude: /node_modules/,
-        use: [
-          { loader: 'url-loader',
-            options: { limit: 2048, name: './fonts/[hash].[ext]' } // inline if under 2k
-          }
-        ]
-      },
-      {
-        test: /\.svg$/,
-        use: [
-          { loader: 'babel!svg-react' }
-        ]
-      }
-    ]
-  },
+module.exports = function() {
+  console.log(`Building for ${ENV}...`);
 
-  plugins: [
+  /* ----- PLUGINS ----- */
+
+  const plugins = [
     new HtmlWebpackPlugin({
       template: 'src/demos/index.html',
+      hash: true,
       inject: 'body',
       filename: 'index.html'
-    })
-  ]
-}
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(ENV),
+    }),
+    new webpack.NamedModulesPlugin(),
+    new ProgressBarPlugin(),
+    new ExtractTextPlugin('bundle.css'),
+  ];
 
-// additional Webpack settings when running locally ('npm start')
-if (TARGET_ENV === 'development') {
-  console.log('Serving demo locally...')
+  if (isDev) {
+    plugins.push(new webpack.HotModuleReplacementPlugin());
+  }
 
-  module.exports = merge(commonConfig, {
+  if (isProd) {
+    plugins.unshift(new CleanWebpackPlugin(['public'])); // clear demo folder first!
+  }
 
-    // source maps (better than 'eval' but slower)
-    devtool: 'inline-source-map',
+  /* ----- ENTRY ----- */
 
-    // dev server settings
-    devServer: {
-      historyApiFallback: true,
-      hot: true,
-      inline: true
-      // progress: true
+  const entry = ['babel-polyfill'];
+
+  if (isDev) {
+    entry.push('react-hot-loader/patch');
+    entry.push(`webpack-dev-server/client?http://localhost:${DEV_PORT}`);
+    entry.push('webpack/hot/dev-server'); // or 'webpack/hot/only-dev-server' to reload on success only
+  }
+
+  entry.push(path.join(srcFolder, 'index.js'));
+
+  /* ----- FINAL CONFIG ----- */
+
+  return {
+    devtool: isDev ? 'eval-source-map' : 'source-map',
+    mode: isDev ? 'development' : 'production',
+    entry: entry,
+    output: {
+      filename: 'bundle.js',
+      path: outFolder,
+      pathinfo: isDev,
+      publicPath: '',
     },
-
-    // dev server with hot-loader
-    entry: [
-      'webpack-dev-server/client?http://localhost:8080',
-      'webpack/hot/only-dev-server',
-      './src/demos/index'
-    ],
-
+    resolve: {
+      modules: [path.resolve('./src'), 'node_modules'],
+      extensions: ['.js', '.jsx'],
+    },
+    plugins: plugins,
     module: {
       rules: [
         {
-          // compile & auto-prefix CSS
-          test: /\.(css|scss)$/,
+          test: /\.(js|jsx)$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/,
+          // include: srcFolder,
+        },
+        {
+          test: /\.(png|jpg|jpeg)$/,
+          exclude: /node_modules/,
           use: [
-            { loader: 'style-loader' },
-            { loader: 'css-loader' },
-            { loader: 'postcss-loader' },
-            { loader: 'sass-loader' }
+            {
+              loader: 'url-loader',
+              options: { limit: 8192, name: './img/[hash].[ext]' } // inline if under 8k
+            }
+          ]
+        },
+        {
+          test: /\.scss$/,
+          loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
+        },
+        {
+          test: /\.(woff|woff2|eot|ttf)$/,
+          exclude: /node_modules/,
+          use: [
+            { loader: 'url-loader',
+              options: { limit: 2048, name: './fonts/[hash].[ext]' } // inline if under 2k
+            }
+          ]
+        },
+        {
+          test: /\.svg$/,
+          use: [
+            { loader: 'babel!svg-react' }
           ]
         }
-      ]
+      ],
     },
-
-    plugins: [
-      new webpack.HotModuleReplacementPlugin()
-    ]
-  })
-}
-
-// additional Webpack settings when bundling for prod ('npm run build')
-if (TARGET_ENV === 'production') {
-  console.log('Building demo for prod...')
-
-  module.exports = merge(commonConfig, {
-
-    entry: [
-      path.join(__dirname, 'src/demos/index')
-    ],
-
-    module: {
-      rules: [
-        {
-          // create and save out a CSS bundle (using ExtractTextPlugin)
-          test: /\.(css|scss)$/,
-          use: ExtractTextPlugin.extract({
-            fallback: 'style-loader',
-            use: [ 'css-loader', 'postcss-loader', 'sass-loader' ]
-          })
-        }
-      ]
+    devServer: {
+      contentBase: outFolder,
+      historyApiFallback: true,
+      hot: true,
+      hotOnly: true,
+      stats: 'minimal',
     },
-
-    plugins: [
-      // set global vars
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('production')
-      }),
-
-      // optimizations
-      new webpack.optimize.OccurrenceOrderPlugin(),
-
-      // save out CSS bundle (backtrack out of scripts/ to save into css/)
-      new ExtractTextPlugin('css/[hash].min.css', { allChunks: true }),
-
-      // minify & mangle JS/CSS
-      new webpack.optimize.UglifyJsPlugin({
-        minimize: true,
-        compressor: { warnings: false }
-        // mangle:  { except:   [ '$super', '$', 'exports', 'require' ] }
-      })
-    ]
-  })
-}
+  };
+};
