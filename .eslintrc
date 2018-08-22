@@ -1,11 +1,36 @@
 {
-  "extends": [ "standard", "plugin:react/recommended" ],
+  "env": { "browser": true }, // do not trip on browser globals, e.g. window, document..
+  "extends": ["airbnb", "prettier", "prettier/react"],
   "parser": "babel-eslint",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "modules": true,
-      "jsx": true,
-      "experimentalObjectRestSpread": true
-    }
+  "plugins": ["prettier"],  // apply prettier through ESLint
+  "rules": {
+    "prettier/prettier": [
+      "warn",
+      {
+        "printWidth": 100,
+        "singleQuote": true,
+        "trailingComma": "es5"
+      }
+    ],
+    "strict": 0, // for babel-eslint
+    "no-nested-ternary": 0,
+    "no-param-reassign": 0,
+    "no-use-before-define": 0,
+
+    "jsx-quotes": [2, "prefer-double"],
+    "react/destructuring-assignment": "off",
+    "react/jsx-filename-extension": "off",
+    "react/require-default-props": "off"
+  },
+  "globals": {
+    "window": false,
+    "document": false,
+    "afterEach": true,
+    "beforeEach": true,
+    "describe": true,
+    "expect": true,
+    "it": true,
+    "jest": true,
+    "test": true
   }
 }
