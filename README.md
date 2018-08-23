@@ -96,7 +96,7 @@ What if you don't want the animation applied to *ALL* paths inside your SVG? Add
 
 
 ### Contributing
-* Create a new branch and make desired fixes/improvements in `src/index.js` and/or `src/utils.js` (the source, not the `lib/` folder)
+* Fork repo, create a new branch, make desired fixes/improvements to `src/index.js` and/or `src/utils.js` (the source, not the `lib/` folder)
 * Build the demo `npm run build` and make sure it runs well `open public/index.html` 
 * Submit a PR!
 

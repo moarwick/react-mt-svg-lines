@@ -23,7 +23,7 @@ module.exports = function() {
       template: 'src/demos/index.html',
       hash: true,
       inject: 'body',
-      filename: 'index.html'
+      filename: 'index.html',
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(ENV),
@@ -58,7 +58,7 @@ module.exports = function() {
   return {
     devtool: isDev ? 'eval-source-map' : 'source-map',
     mode: isDev ? 'development' : 'production',
-    entry: entry,
+    entry,
     output: {
       filename: 'bundle.js',
       path: outFolder,
@@ -69,7 +69,7 @@ module.exports = function() {
       modules: [path.resolve('./src'), 'node_modules'],
       extensions: ['.js', '.jsx'],
     },
-    plugins: plugins,
+    plugins,
     module: {
       rules: [
         {
@@ -84,29 +84,28 @@ module.exports = function() {
           use: [
             {
               loader: 'url-loader',
-              options: { limit: 8192, name: './img/[hash].[ext]' } // inline if under 8k
-            }
-          ]
+              options: { limit: 8192, name: './img/[hash].[ext]' }, // inline if under 8k
+            },
+          ],
         },
         {
           test: /\.scss$/,
-          loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader'])
+          loader: ExtractTextPlugin.extract(['css-loader', 'sass-loader', 'postcss-loader']),
         },
         {
           test: /\.(woff|woff2|eot|ttf)$/,
           exclude: /node_modules/,
           use: [
-            { loader: 'url-loader',
-              options: { limit: 2048, name: './fonts/[hash].[ext]' } // inline if under 2k
-            }
-          ]
+            {
+              loader: 'url-loader',
+              options: { limit: 2048, name: './fonts/[hash].[ext]' }, // inline if under 2k
+            },
+          ],
         },
         {
           test: /\.svg$/,
-          use: [
-            { loader: 'babel!svg-react' }
-          ]
-        }
+          use: [{ loader: 'babel!svg-react' }],
+        },
       ],
     },
     devServer: {
