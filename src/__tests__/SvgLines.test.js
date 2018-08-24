@@ -12,10 +12,9 @@ describe('SvgLines', () => {
       </SvgLines>
     );
 
-
-    console.log(wrapper.debug(), wrapper.prop('children'));
-    // expect(wrapper.type()).toBe('button');
-    // expect(wrapper.prop('disabled')).toBe(undefined);
-    // expect(wrapper.getElement()).toMatchSnapshot(); // snapshot!
+    expect(wrapper.type()).toBe('span');
+    expect(wrapper.prop('className')).toContain('mt-init');
+    expect(wrapper.find('style')).toHaveLength(1);
+    expect(wrapper.find('svg')).toHaveLength(1);
   });
 });
