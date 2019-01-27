@@ -1,7 +1,7 @@
 import React from 'react';
-import { hot } from 'react-hot-loader';
+// import { hot } from 'react-hot-loader';
 import { version } from '../../../package.json';
-import MtSvgLines from '../../index.js';
+import MtSvgLines from '../../index';
 // import MtSvgLines from '../../../lib/'  // NOTE: uncomment to test built lib
 
 import SvgCheckmark from './SvgCheckmark';
@@ -108,12 +108,7 @@ class DemoPage extends React.Component {
     } = this.state;
 
     return (
-      <div
-        ref={c => {
-          this._el = c;
-        }}
-        style={styles.wrapper}
-      >
+      <div ref={c => (this._el = c)} style={styles.wrapper}>
         <a href="https://github.com/moarwick/react-mt-svg-lines" style={styles.gitHubLink}>
           {this.renderGithubLogo()}
         </a>
@@ -246,7 +241,7 @@ class DemoPage extends React.Component {
   }
 }
 
-export default hot(module)(DemoPage);
+export default DemoPage;
 
 const styles = {
   wrapper: {

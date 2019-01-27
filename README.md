@@ -1,8 +1,6 @@
 react-mt-svg-lines
 ==================
 
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
-
 ### Bring your SVGs to life
 
 ![GIF Demo](showcase.gif)
@@ -26,20 +24,20 @@ npm install react-mt-svg-lines --save
 ```
 
 ### Usage
-Require `MtSvgLines` into your component (you can import it under any name)...
+Require `SvgLines` into your component (you can import it under any name)...
 ```js
-import MtSvgLines from 'react-mt-svg-lines';      // ES6+
+import SvgLines from 'react-mt-svg-lines';    // ES6+
 // or...
-var MtSvgLines = require('react-mt-svg-lines').default;
+var SvgLines = require('react-mt-svg-lines').default;
 ```
 
 In your JSX, wrap it around any valid SVG...
-```js
-<MtSvgLines animate={ true } duration={ 500 }>
+```jsx
+<SvgLines animate={ true } duration={ 500 }>
   <svg viewBox="0 0 100 100">
     <path stroke="green" strokeWidth="10" fill="none" d="M20.8,51c0,0,20.8,18.2,21.5,18.2c0.6,0,33.3-38.5,33.3-38.5" />
   </svg>
-</MtSvgLines>
+</SvgLines>
 ```
 
 
