@@ -3,4 +3,5 @@ public/
 test/
 webpack.config.js
 showcase.gif
+lib/__tests__
 .idea
