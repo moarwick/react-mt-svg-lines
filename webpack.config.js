@@ -46,9 +46,9 @@ module.exports = function() {
   const entry = ['babel-polyfill'];
 
   if (isDev) {
-    entry.push('react-hot-loader/patch');
+    // entry.push('react-hot-loader/patch');
     entry.push(`webpack-dev-server/client?http://localhost:${DEV_PORT}`);
-    entry.push('webpack/hot/dev-server'); // or 'webpack/hot/only-dev-server' to reload on success only
+    // entry.push('webpack/hot/dev-server'); // or 'webpack/hot/only-dev-server' to reload on success only
   }
 
   entry.push(path.join(srcFolder, 'index.js'));
@@ -111,8 +111,8 @@ module.exports = function() {
     devServer: {
       contentBase: outFolder,
       historyApiFallback: true,
-      hot: true,
-      hotOnly: true,
+      // hot: true,
+      // hotOnly: true,
       stats: 'minimal',
     },
   };

@@ -1,9 +1,7 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import DemoPage from './components/DemoPage'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import DemoPage from './components/DemoPage';
 
-require('./stylesheet.scss')
+require('./stylesheet.scss');
 
-ReactDOM.render((
-  <DemoPage />
-), document.getElementById('component'))
+ReactDOM.render(<DemoPage />, document.getElementById('component'));
